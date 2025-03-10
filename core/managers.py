@@ -8,11 +8,20 @@ class CustomUserManager(BaseUserManager):
       raise ValueError('email is required')
     if not username:
       raise ValueError('username is required')
+    
     email = self.normalize_email(email)
-    user = self.model(email=email,username=username, **extra_fields)
+    
+
+    if 'first_name' not in extra_fields:
+        extra_fields['first_name'] = ''
+    if 'last_name' not in extra_fields:
+        extra_fields['last_name'] = ''
+        
+    user = self.model(email=email, username=username, **extra_fields)
     user.set_password(password)
     user.save(using=self._db)
     return user
+    
   def create_superuser(self, email, username, password=None, **extra_fields):
     """ Create and return a superuser with the given email, username, and password. """
     extra_fields.setdefault('is_staff', True)
